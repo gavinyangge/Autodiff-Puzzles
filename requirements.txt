@@ -1,0 +1,48 @@
+# Autodiff Puzzles — local environment (JAX on CPU, NO GPU required)
+#
+# The bulk of the stack is installed via conda-forge (not pip), because
+# `pip install jax` hangs on dependency backtracking. The one pip piece is
+# chalx, which is only available from git.
+#
+# Everything is automated in setup_env.sh:
+#
+#   bash setup_env.sh
+#
+# What it does (for reference):
+#   conda create -n autodiff-puzzles python=3.12 -y
+#   conda install -n autodiff-puzzles -c conda-forge -y --solver=libmamba \
+#       jax jaxlib numpy matplotlib jaxtyping beartype ipykernel jupyter debugpy \
+#       chex toolz colour imageio typing-extensions importlib_metadata
+#   pip install --no-deps git+https://github.com/chalk-diagrams/chalx   # imports as `chalk`
+#
+# Then a one-line patch is applied to chalx (chalk/array_types.py):
+#   jax.tree_map  ->  jax.tree.map
+# because chalx 0.2.1 predates jax 0.5, which removed `jax.tree_map`.
+#
+# System deps: NONE beyond conda. (chalk renders SVG with a pure-python backend,
+# so cairo/pycairo/cairosvg are NOT needed.)
+#
+# VSCode: open autodiff_puzzlers.ipynb, select kernel "Python (autodiff-puzzles)".
+# Cell 1's `!pip install` line is commented out (deps already in the env);
+# re-running it would reinstall chalx and overwrite the patch.
+
+# --- conda-forge packages ---
+jax
+jaxlib
+numpy
+matplotlib
+jaxtyping
+beartype
+ipykernel
+jupyter
+debugpy
+chex
+toolz
+colour
+imageio
+typing-extensions
+importlib_metadata
+
+# --- pip-only (from git) ---
+# chalx = JAX-compatible fork of chalk-diagrams; imports as `chalk`
+git+https://github.com/chalk-diagrams/chalx
